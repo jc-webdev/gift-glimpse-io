@@ -10,33 +10,69 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PomyslyIndexRouteImport } from './routes/pomysly.index'
+import { Route as PomyslyIdeaIdIndexRouteImport } from './routes/pomysly.$ideaId.index'
+import { Route as PomyslyIdeaIdRezerwacjaRouteImport } from './routes/pomysly.$ideaId.rezerwacja'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PomyslyIndexRoute = PomyslyIndexRouteImport.update({
+  id: '/pomysly/',
+  path: '/pomysly/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PomyslyIdeaIdIndexRoute = PomyslyIdeaIdIndexRouteImport.update({
+  id: '/pomysly/$ideaId/',
+  path: '/pomysly/$ideaId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PomyslyIdeaIdRezerwacjaRoute = PomyslyIdeaIdRezerwacjaRouteImport.update({
+  id: '/pomysly/$ideaId/rezerwacja',
+  path: '/pomysly/$ideaId/rezerwacja',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pomysly/': typeof PomyslyIndexRoute
+  '/pomysly/$ideaId/rezerwacja': typeof PomyslyIdeaIdRezerwacjaRoute
+  '/pomysly/$ideaId/': typeof PomyslyIdeaIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pomysly': typeof PomyslyIndexRoute
+  '/pomysly/$ideaId/rezerwacja': typeof PomyslyIdeaIdRezerwacjaRoute
+  '/pomysly/$ideaId': typeof PomyslyIdeaIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pomysly/': typeof PomyslyIndexRoute
+  '/pomysly/$ideaId/rezerwacja': typeof PomyslyIdeaIdRezerwacjaRoute
+  '/pomysly/$ideaId/': typeof PomyslyIdeaIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/pomysly/' | '/pomysly/$ideaId/rezerwacja' | '/pomysly/$ideaId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/pomysly' | '/pomysly/$ideaId/rezerwacja' | '/pomysly/$ideaId'
+  id:
+    | '__root__'
+    | '/'
+    | '/pomysly/'
+    | '/pomysly/$ideaId/rezerwacja'
+    | '/pomysly/$ideaId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PomyslyIndexRoute: typeof PomyslyIndexRoute
+  PomyslyIdeaIdRezerwacjaRoute: typeof PomyslyIdeaIdRezerwacjaRoute
+  PomyslyIdeaIdIndexRoute: typeof PomyslyIdeaIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +84,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pomysly/': {
+      id: '/pomysly/'
+      path: '/pomysly'
+      fullPath: '/pomysly/'
+      preLoaderRoute: typeof PomyslyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pomysly/$ideaId/': {
+      id: '/pomysly/$ideaId/'
+      path: '/pomysly/$ideaId'
+      fullPath: '/pomysly/$ideaId/'
+      preLoaderRoute: typeof PomyslyIdeaIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pomysly/$ideaId/rezerwacja': {
+      id: '/pomysly/$ideaId/rezerwacja'
+      path: '/pomysly/$ideaId/rezerwacja'
+      fullPath: '/pomysly/$ideaId/rezerwacja'
+      preLoaderRoute: typeof PomyslyIdeaIdRezerwacjaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PomyslyIndexRoute: PomyslyIndexRoute,
+  PomyslyIdeaIdRezerwacjaRoute: PomyslyIdeaIdRezerwacjaRoute,
+  PomyslyIdeaIdIndexRoute: PomyslyIdeaIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
