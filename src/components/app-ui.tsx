@@ -3,6 +3,16 @@ import type { ReactNode } from "react";
 import { groupName, priorityMeta, type Idea } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
+export type AppPath =
+  | "/"
+  | "/pomysly"
+  | "/ludzie"
+  | "/prezenty"
+  | "/grupy"
+  | "/ja"
+  | "/ja/prywatnosc"
+  | "/dodaj";
+
 export function Screen({
   children,
   withTabs = true,
@@ -31,7 +41,7 @@ export function TopBar({
   eyebrow?: string;
   title: string;
   right?: ReactNode;
-  back?: { to: string; label?: string };
+  back?: { to: AppPath; label?: string };
   children?: ReactNode;
 }) {
   return (
@@ -83,10 +93,7 @@ export function Card({
   ...rest
 }: React.HTMLAttributes<HTMLDivElement> & { children: ReactNode }) {
   return (
-    <div
-      className={cn("glass ring-hi rounded-3xl ring-1 ring-frost/60", className)}
-      {...rest}
-    >
+    <div className={cn("glass ring-hi rounded-3xl ring-1 ring-frost/60", className)} {...rest}>
       {children}
     </div>
   );
@@ -111,7 +118,7 @@ export function Pill({
   return (
     <span
       className={cn(
-        "rounded-full px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap",
+        "whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold",
         tones[tone],
         className,
       )}
@@ -121,7 +128,13 @@ export function Pill({
   );
 }
 
-export function PriorityPill({ priority, short = false }: { priority: Idea["priority"]; short?: boolean }) {
+export function PriorityPill({
+  priority,
+  short = false,
+}: {
+  priority: Idea["priority"];
+  short?: boolean;
+}) {
   const meta = priorityMeta[priority];
   const tone = priority === "bardzo" ? "warm" : priority === "chce" ? "accent" : "neutral";
   return (
@@ -137,17 +150,19 @@ export function VisibilityPill({ visibility }: { visibility: string[] }) {
 
 export function IdeaCard({
   idea,
-  to,
   compact = false,
   reserved,
 }: {
   idea: Idea;
-  to: string;
   compact?: boolean;
   reserved?: "me" | "other";
 }) {
   return (
-    <Link to={to} className="press block">
+    <Link
+      to="/pomysly/$ideaId"
+      params={{ ideaId: idea.id }}
+      className="press block"
+    >
       <Card className="rise overflow-hidden">
         <div className="relative">
           <img
@@ -195,10 +210,14 @@ export function IdeaCard({
   );
 }
 
-export function PersonRow({ person, to }: { person: { name: string; avatar: string; relation: string; birthday: string }; to: string }) {
+export function PersonRow({
+  person,
+}: {
+  person: { id: string; name: string; avatar: string; relation: string; birthday: string };
+}) {
   return (
-    <Link to={to} className="press block">
-      <Card className="flex items-center gap-3 p-3">
+    <Link to="/ludzie/$personId" params={{ personId: person.id }} className="press block">
+      <Card className="rise flex items-center gap-3 p-3">
         <img
           src={person.avatar}
           alt={person.name}
@@ -246,9 +265,12 @@ export function ErrorState({ onRetry, text }: { onRetry: () => void; text?: stri
       </div>
       <h3 className="mt-4 font-display text-[19px] font-medium text-ink">Nie udało się wczytać</h3>
       <p className="mx-auto mt-1.5 max-w-[28ch] text-[13px] leading-relaxed text-mute">
-        {text ?? "Połączenie chwilowo nie odpowiada. Twoje dane są bezpieczne."}
+        {text ?? "Połączenie chwilowo nie odpowiada. Twoje pomysły są bezpieczne."}
       </p>
-      <button onClick={onRetry} className="press mt-4 rounded-full bg-ink px-5 py-2.5 text-[14px] font-semibold text-bg">
+      <button
+        onClick={onRetry}
+        className="press mt-4 rounded-full bg-ink px-5 py-2.5 text-[14px] font-semibold text-bg"
+      >
         Spróbuj ponownie
       </button>
     </Card>
@@ -294,12 +316,12 @@ export function AddIdeaCta({ label = "Dodaj pomysł" }: { label?: string }) {
   );
 }
 
-const tabs = [
+const tabs: { to: AppPath; label: string; icon: string }[] = [
   { to: "/pomysly", label: "Pomysły", icon: "✦" },
   { to: "/ludzie", label: "Ludzie", icon: "◍" },
   { to: "/prezenty", label: "Prezenty", icon: "❀" },
   { to: "/ja", label: "Ja", icon: "☾" },
-] as const;
+];
 
 export function TabBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
